@@ -1,18 +1,24 @@
-name: Auto Renew Workflow (60d keepalive)
+name: 🔄 Auto Keep Alive (60天续期)
 
 on:
   schedule:
-    - cron: '0 0 */45 * *'
+    - cron: "0 0 */50 * *"
   workflow_dispatch:
 
 jobs:
-  renew:
+  keepalive:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
-      contents: read
+      contents: write
+
     steps:
-      - name: Keep workflow active
-        uses: gautamkrishnar/keepalive-workflow@v2
+      - uses: actions/checkout@v4
         with:
-          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 自动空提交续期
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git commit --allow-empty -m "chore: keep alive 自动续期"
+          git push
